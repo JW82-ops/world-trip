@@ -784,19 +784,9 @@ h2 small, h1 small { font-size: 20px; color: #7a869a; margin-left: 8px; }
 .L-land .fig img { height: 84px; } .L-land .fig.now img { height: 134px; }
 .L-land .c-title { font-size: 26px; }
 
-/* ===== 첫 화면: 웃는 지구 + 로고 + 눌러서 시작 ===== */
-#scr-title, .L-port #scr-title { background: #ffd27a url(../img/title_A.webp) right center / cover no-repeat; cursor: pointer; }
-.L-port #scr-title { background-image: url(../img/title_A_p.webp); background-position: center bottom; }
-.title-logo { position: absolute; left: 5%; top: 46%; transform: translateY(-50%); width: 46%; filter: drop-shadow(0 10px 12px rgba(0,40,90,.35)); animation: logoIn .8s cubic-bezier(.3,1.6,.6,1) both; }
-.tap-start { position: absolute; left: 28%; bottom: 9%; transform: translateX(-50%); background: rgba(255,255,255,.92); border-radius: 40px; padding: 14px 36px; font-size: 34px; color: #253048; box-shadow: 0 6px 0 rgba(0,0,0,.12); white-space: nowrap; animation: tapPulse 1.3s ease-in-out infinite; }
-.L-port .title-logo { left: 50%; top: 6%; transform: translateX(-50%); width: 86%; animation: logoInP .8s cubic-bezier(.3,1.6,.6,1) both; }
-.L-port .tap-start { left: 50%; bottom: 5%; font-size: 36px; }
-@keyframes logoIn { from { transform: translateY(-50%) scale(.6); opacity: 0 } }
-@keyframes logoInP { from { transform: translateX(-50%) scale(.6); opacity: 0 } }
-@keyframes tapPulse { 0%,100% { transform: translateX(-50%) scale(1) } 50% { transform: translateX(-50%) scale(1.07) } }
 /* 준비 화면 오른쪽 위 작은 아이콘 */
 .st-tools { position: absolute; right: 16px; top: 14px; display: flex; gap: 8px; z-index: 5; }
 .st-tools button { width: 52px; height: 52px; border: none; border-radius: 16px; background: rgba(255,255,255,.92); box-shadow: 0 4px 0 rgba(0,0,0,.12); font-size: 26px; cursor: pointer; }
 .L-port .st-tools { right: 10px; top: 10px; } .L-port .st-tools button { width: 48px; height: 48px; font-size: 24px; }
-.L-port .st-logo { margin-top: 44px; }
 .L-land .st-tools { left: 24px; right: auto; top: 10px; } .L-land .st-tools button { width: 44px; height: 44px; font-size: 22px; border-radius: 13px; }
+.L-land .title-bg { object-position: center 6%; }
