@@ -698,21 +698,23 @@ function howTo() {
 
 /* ---------- 시작 화면 / 설정 화면 ---------- */
 function titleScreen() {
-  const s = lsGet('save');
-  $('#title-btns').innerHTML = `<button class="btn big yellow" id="t-new">🌏 새 게임</button>${s && !s.over ? '<button class="btn big green" id="t-cont">▶ 이어하기</button>' : ''}
-    <div class="row"><button class="btn white" id="t-book">📖 도시 도감</button><button class="btn white" id="t-cp">🎟️ 쿠폰함</button><button class="btn white" id="t-how">❓ 게임 방법</button><button class="btn white" id="t-set">⚙️</button></div>`;
-  $('#t-new').onclick = () => { Sound.unlock(); Sound.sfx('tap'); setupScreen(); };
-  if ($('#t-cont')) $('#t-cont').onclick = () => { Sound.unlock(); Sound.sfx('tap'); G = s; startGameScreen(); };
-  $('#t-book').onclick = () => { Sound.unlock(); Sound.sfx('tap'); openBook(); };
-  $('#t-cp').onclick = () => { Sound.sfx('tap'); openCoupons(); };
-  $('#t-how').onclick = () => { Sound.sfx('tap'); howTo(); };
-  $('#t-set').onclick = () => { Sound.sfx('tap'); openSettings(); };
+  const t = $('#scr-title');
+  t.onclick = async () => {
+    if (t.dataset.busy) return; t.dataset.busy = 1;
+    Sound.unlock(); Sound.sfx('buy');
+    const s = lsGet('save');
+    if (s && !s.over) {
+      const v = await ask('<h2>🌏 다시 왔네요!</h2><p>하던 게임이 저장돼 있어요.</p>', [{ t: '▶ 이어하기', v: 'cont', cls: 'green' }, { t: '🌏 새 게임', v: 'new', cls: 'yellow' }]);
+      t.dataset.busy = '';
+      if (v === 'cont') { G = s; startGameScreen(); } else setupScreen();
+    } else { t.dataset.busy = ''; setupScreen(); }
+  };
 }
 function setupScreen() {
   $('#scr-title').classList.remove('on'); $('#scr-setup').classList.add('on');
   const st = { mode: 'family', ids: ['jia', 'jian', 'mom', 'dad'], rounds: 12 };
   const draw = () => {
-    $('#scr-setup').innerHTML = `<div class="setup"><img src="img/logo.webp" class="st-logo" onerror="this.style.display='none'">
+    $('#scr-setup').innerHTML = `<div class="st-tools"><button data-t="book">📖</button><button data-t="cp">🎟️</button><button data-t="how">❓</button><button data-t="set">⚙️</button></div><div class="setup"><img src="img/logo.webp" class="st-logo" onerror="this.style.display='none'">
       <div class="st-block"><div class="st-label"><i>1</i> 어떻게 놀까요?</div>
       <div class="modes"><button class="mode fam ${st.mode === 'family' ? 'on' : ''}" data-m="family"><span class="mi">👨‍👩‍👧‍👧</span><span><b>가족 대결</b><small>원래 부루마블처럼! 누가 제일 부자가 될까?</small></span></button>
         <button class="mode coop ${st.mode === 'coop' ? 'on' : ''}" data-m="coop"><span class="mi">🤝</span><span><b>함께 세계일주</b><small>가족이 한 팀! 🦊 여우 여행사를 이겨라</small></span></button></div></div>
@@ -721,6 +723,7 @@ function setupScreen() {
       <div class="st-block"><div class="st-label"><i>3</i> 얼마나 할까요?</div>
       <div class="lens">${[[8, '짧게', '약 20분', '⏱️'], [12, '보통', '약 30분', '⏰'], [20, '길게', '약 50분', '🌙'], [0, '끝까지', '한 명 남을 때까지', '🏆']].map(([r, t, d, e]) => `<button class="len ${st.rounds === r ? 'on' : ''}" data-r="${r}"><span class="le">${e}</span><b>${t}</b><small>${r ? r + '라운드 · ' : ''}${d}</small></button>`).join('')}</div></div>
       <div class="row st-go"><button class="btn gray" id="st-back">◀ 뒤로</button><button class="btn big yellow" id="st-go">출발! ✈️</button></div></div>`;
+    $$('.st-tools button').forEach(b => b.onclick = () => { Sound.sfx('tap'); ({ book: openBook, cp: openCoupons, how: howTo, set: openSettings })[b.dataset.t](); });
     $$('.mode').forEach(b => b.onclick = () => { Sound.sfx('tap'); st.mode = b.dataset.m; if (st.mode === 'coop' && st.rounds === 0) st.rounds = 12; draw(); });
     $$('.whob').forEach(b => b.onclick = () => { Sound.sfx('tap'); const k = b.dataset.k; st.ids = st.ids.includes(k) ? st.ids.filter(x => x !== k) : [...st.ids, k]; draw(); });
     $$('.len').forEach(b => b.onclick = () => { Sound.sfx('tap'); st.rounds = +b.dataset.r; if (st.mode === 'coop' && !st.rounds) { toast('함께 모드는 라운드를 정해야 해요!'); st.rounds = 20; } draw(); });
