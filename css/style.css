@@ -877,3 +877,6 @@ h2 small, h1 small { font-size: 20px; color: #7a869a; margin-left: 8px; }
 .L-land .slot { flex-direction: column; gap: 0; padding: 6px; } .L-land .slot img { height: 104px; } .L-land .slot small { display: block; font-size: 15px; }
 .chars { grid-template-columns: repeat(11, 1fr); gap: 8px; }
 .L-port .chars { grid-template-columns: repeat(6, 1fr); gap: 6px; } .L-port .chb img { height: 84px; } .L-port .chb span { font-size: 16px; }
+.L-port .who { grid-template-columns: repeat(5, 1fr); gap: 6px; }
+.L-port .whob .wb-base { width: 66px; height: 66px; } .L-port .whob img { height: 82px; } .L-port .whob b { font-size: 21px; } .L-port .whob small { font-size: 12px; }
+.L-land .who { gap: 8px; } .L-land .whob .wb-base { width: 58px; height: 58px; } .L-land .whob img { height: 70px; } .L-land .whob b { font-size: 22px; }

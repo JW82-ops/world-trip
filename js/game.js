@@ -37,7 +37,7 @@ function save() { if (G && !G.over && !ONLINE) lsSet('save', G); }
 
 /* ---------- 새 게임 ---------- */
 function newGame(mode, ids, rounds) {
-  const order = ['jia', 'jian', 'mom', 'dad'].filter(i => ids.includes(i));
+  const order = ['jia', 'jian', 'eunbyeol', 'mom', 'dad'].filter(i => ids.includes(i));
   G = {
     mode, rounds, round: 1, turn: 0, fund: 0, over: false, own: {}, conq: {}, log: [],
     players: order.map(id => ({ id, pid: id, name: PEOPLE[id].name, level: PEOPLE[id].level, color: PEOPLE[id].color, img: PEOPLE[id].img,
@@ -727,12 +727,12 @@ function setupScreen() {
       <div class="modes"><button class="mode fam ${st.mode === 'family' ? 'on' : ''}" data-m="family"><span class="mi">👨‍👩‍👧‍👧</span><span><b>가족 대결</b><small>원래 부루마블처럼! 누가 제일 부자가 될까?</small></span></button>
         <button class="mode coop ${st.mode === 'coop' ? 'on' : ''}" data-m="coop"><span class="mi">🤝</span><span><b>함께 세계일주</b><small>가족이 한 팀! 🦊 여우 여행사를 이겨라</small></span></button></div></div>
       <div class="st-block"><div class="st-label"><i>2</i> 누가 할까요? <small>(${st.mode === 'family' ? '2~4명' : '1~4명'})</small></div>
-      <div class="who">${['jia', 'jian', 'mom', 'dad'].map(k => `<button class="whob ${st.ids.includes(k) ? 'on' : ''}" data-k="${k}" style="--pc:${PEOPLE[k].color}"><span class="wb-base"><img src="${PEOPLE[k].img}"></span><b>${PEOPLE[k].name}</b><small>${PEOPLE[k].title} 문제</small></button>`).join('')}</div></div>
+      <div class="who">${['jia', 'jian', 'eunbyeol', 'mom', 'dad'].map(k => `<button class="whob ${st.ids.includes(k) ? 'on' : ''}" data-k="${k}" style="--pc:${PEOPLE[k].color}"><span class="wb-base"><img src="${PEOPLE[k].img}"></span><b>${PEOPLE[k].name}</b><small>${PEOPLE[k].title} 문제</small></button>`).join('')}</div></div>
       <div class="st-block"><div class="st-label"><i>3</i> 얼마나 할까요?</div>
       <div class="lens">${[[8, '짧게', '약 20분', '⏱️'], [12, '보통', '약 30분', '⏰'], [20, '길게', '약 50분', '🌙'], [0, '끝까지', '한 명 남을 때까지', '🏆']].map(([r, t, d, e]) => `<button class="len ${st.rounds === r ? 'on' : ''}" data-r="${r}"><span class="le">${e}</span><b>${t}</b><small>${r ? r + '라운드 · ' : ''}${d}</small></button>`).join('')}</div></div>
       <div class="row st-go"><button class="btn gray" id="st-back">◀ 뒤로</button><button class="btn big yellow" id="st-go">출발! ✈️</button></div></div>`;
     $$('.mode').forEach(b => b.onclick = () => { Sound.sfx('tap'); st.mode = b.dataset.m; if (st.mode === 'coop' && st.rounds === 0) st.rounds = 12; draw(); });
-    $$('.whob').forEach(b => b.onclick = () => { Sound.sfx('tap'); const k = b.dataset.k; st.ids = st.ids.includes(k) ? st.ids.filter(x => x !== k) : [...st.ids, k]; draw(); });
+    $$('.whob').forEach(b => b.onclick = () => { Sound.sfx('tap'); const k = b.dataset.k; if (!st.ids.includes(k) && st.ids.length >= 4) { Sound.sfx('bad'); return toast('최대 4명까지 할 수 있어요! 한 명을 먼저 빼 주세요'); } st.ids = st.ids.includes(k) ? st.ids.filter(x => x !== k) : [...st.ids, k]; draw(); });
     $$('.len').forEach(b => b.onclick = () => { Sound.sfx('tap'); st.rounds = +b.dataset.r; if (st.mode === 'coop' && !st.rounds) { toast('함께 모드는 라운드를 정해야 해요!'); st.rounds = 20; } draw(); });
     $('#st-back').onclick = () => { Sound.sfx('tap'); $('#scr-setup').classList.remove('on'); $('#scr-title').classList.add('on'); };
     $('#st-go').onclick = () => {
