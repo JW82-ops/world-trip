@@ -789,4 +789,13 @@ h2 small, h1 small { font-size: 20px; color: #7a869a; margin-left: 8px; }
 .st-tools button { width: 52px; height: 52px; border: none; border-radius: 16px; background: rgba(255,255,255,.92); box-shadow: 0 4px 0 rgba(0,0,0,.12); font-size: 26px; cursor: pointer; }
 .L-port .st-tools { right: 10px; top: 10px; } .L-port .st-tools button { width: 48px; height: 48px; font-size: 24px; }
 .L-land .st-tools { left: 24px; right: auto; top: 10px; } .L-land .st-tools button { width: 44px; height: 44px; font-size: 22px; border-radius: 13px; }
-.L-land .title-bg { object-position: center 6%; }
+
+/* ===== 첫 화면(가로·태블릿): 그림은 자르지 않고 통째로, 버튼은 오른쪽에 ===== */
+.L-tab #scr-title, .L-land #scr-title { background: url(../img/bg_sky.webp) center / cover no-repeat; }
+.L-tab .title-bg, .L-land .title-bg { inset: auto; left: 26px; top: 50%; transform: translateY(-50%);
+  width: min(calc(var(--sw) - 340px), calc((var(--sh) - 44px) * 1.787)); height: auto; object-fit: contain;
+  border-radius: 28px; box-shadow: 0 0 0 8px #fff, 0 18px 40px rgba(20,60,120,.35); }
+.L-tab #title-btns, .L-land #title-btns { left: auto; right: 26px; bottom: auto; top: 50%; transform: translateY(-50%); width: 270px; gap: 14px; }
+.L-tab #title-btns .btn.big, .L-land #title-btns .btn.big { min-width: 0; width: 100%; font-size: 34px; padding: 16px 10px; }
+.L-tab #title-btns .row, .L-land #title-btns .row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; }
+.L-tab #title-btns .row .btn, .L-land #title-btns .row .btn { font-size: 21px; padding: 10px 6px; }
