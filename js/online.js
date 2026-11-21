@@ -65,7 +65,7 @@ const Online = (() => {
       </div>`;
       const nick = $('#on-nick');
       nick.oninput = () => { st.nick = cleanNick(nick.value); };
-      $$('.chb').forEach(b => b.onclick = () => { Sound.sfx('tap'); st.ch = b.dataset.c; st.nick = cleanNick(nick.value); draw(); });
+      $$('.chb').forEach(b => b.onclick = () => { Sound.sfx('tap'); st.nick = cleanNick(nick.value); if (CHARS.some(k => PEOPLE[k].name === st.nick)) st.nick = ''; st.ch = b.dataset.c; draw(); });
       $$('.lvb').forEach(b => b.onclick = () => { Sound.sfx('tap'); st.lv = +b.dataset.l; st.nick = cleanNick(nick.value); draw(); });
       $('#on-back').onclick = () => { Sound.sfx('tap'); back(); };
       const fin = () => { st.nick = cleanNick(nick.value) || PEOPLE[st.ch].name; lsSet('oprof', st); return st; };
@@ -113,6 +113,7 @@ const Online = (() => {
     if (taken.includes(ch)) {
       ch = await ask(`<h2>앗, ${PEOPLE[ch].name} 캐릭터는 친구가 골랐어요!</h2><p>다른 캐릭터를 골라 주세요.</p>`,
         CHARS.filter(k => !taken.includes(k)).map(k => ({ t: `<img src="${PEOPLE[k].img}" class="mini-av"> ${PEOPLE[k].name}`, v: k, cls: 'white' })), { box: 'wide' });
+      if (st.nick === PEOPLE[st.ch].name) st.nick = PEOPLE[ch].name;
       st.ch = ch; lsSet('oprof', st);
     }
     await Net.update(R('players'), { [me]: { nick: st.nick, ch, lv: st.lv, seat: Date.now() } });
