@@ -165,8 +165,8 @@ const Quiz = (() => {
       const helpOk = opt.helpers && opt.helpers.length && !opt.hard;
       const choiceHtml = q.choices.map((c, i) => `<button class="qc ${q.emoChoice ? 'emo' : ''} ${q.enChoice ? 'en' : ''}" data-i="${i}">${c}</button>`).join('');
       const m = modal(`
-        <div class="qhead" style="--pc:${player.color}"><img src="${player.img || ''}" class="qav">${player.name}<span class="lv">${PEOPLE[player.pid] ? PEOPLE[player.pid].title : ''}</span><span class="qt">${opt.title || '퀴즈'}</span></div>
-        ${opt.host ? `<div class="hostbar">🎤 사회자 <b>${opt.host.name}</b>${josa(opt.host.name, '이', '가')} 문제를 읽어 줘요!</div>` : ''}
+        <div class="qhead" style="--pc:${player.color}"><img src="${player.img || ''}" class="qav">${player.name}<span class="lv">${LVT[player.level] || ''}</span><span class="qt">${opt.title || '퀴즈'}</span></div>
+        ${opt.host ? `<div class="hostbar">🎤 사회자 <b>${josa(opt.host.name, '이', '가')}</b> 문제를 읽어 줘요!</div>` : ''}
         ${cc ? `<div class="qcity" style="--sc:${SIDE_COLOR[cc.side]}">${cc.flag} ${cc.country} 문제!</div>` : ''}
         ${opt.banner ? `<div class="qbanner">${opt.banner}</div>` : ''}
         <div class="qq">${q.q}</div>

@@ -7,6 +7,18 @@ const PEOPLE = {
   mom:  { id: 'mom',  name: '엄마', level: 3, color: '#a66bff', img: 'img/p_mom.webp',  kid: false, title: '박사' },
   dad:  { id: 'dad',  name: '아빠', level: 3, color: '#2f86ff', img: 'img/p_dad.webp',  kid: false, title: '박사' },
 };
+// 온라인 친구 캐릭터 (게임 속 이름은 각자 정한 별명)
+const FRIENDS = {
+  bunny: { id: 'bunny', name: '토끼', color: '#19b3a6', img: 'img/f_bunny.webp', friend: true },
+  bear:  { id: 'bear',  name: '곰돌이', color: '#e5443a', img: 'img/f_bear.webp', friend: true },
+  cat:   { id: 'cat',   name: '고양이', color: '#8b5cf6', img: 'img/f_cat.webp', friend: true },
+  panda: { id: 'panda', name: '판다', color: '#3aa0ff', img: 'img/f_panda.webp', friend: true },
+  dino:  { id: 'dino',  name: '공룡', color: '#5cbf2a', img: 'img/f_dino.webp', friend: true },
+  shiba: { id: 'shiba', name: '시바', color: '#ff8a1f', img: 'img/f_shiba.webp', friend: true },
+};
+Object.assign(PEOPLE, FRIENDS);
+const LVT = { 1: '새싹', 2: '탐험가', 3: '박사' };
+const LV_INFO = { 1: ['🌱', '새싹', '7살쯤'], 2: ['🧭', '탐험가', '초등학생'], 3: ['🎓', '박사', '어른'] };
 const RIVAL = { id: 'rival', name: '여우 여행사', color: '#ff7a1a', emoji: '🦊' };
 const TEAM_COLOR = '#18b979';
 

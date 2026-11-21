@@ -4,6 +4,7 @@ let rollWaiter = null; // 주사위 버튼 대기
 let pickWaiter = null; // 우주여행 칸 고르기 대기
 let rollLabel = '';     // 주사위 버튼 글자
 let lastDice = [1, 1];  // 마지막 주사위 눈
+const NET = (k, v) => { if (ONLINE) Online.emit(k, v); }; // 온라인: 내 차례 화면을 친구들에게 보내기
 
 /* ---------- 기본 계산 ---------- */
 const cur = () => G.players[G.turn];
@@ -29,10 +30,10 @@ function assets(k) {
   for (const i in G.own) if (G.own[i].o === k) v += propValue(+i);
   return v;
 }
-const hostOf = () => isCoop() ? null : G.players.find(p => p.out) || null;
-const helpersOf = (p) => G.players.filter(o => o !== p && !o.out);
+const hostOf = () => isCoop() || ONLINE ? null : G.players.find(p => p.out) || null;
+const helpersOf = (p) => ONLINE ? [] : G.players.filter(o => o !== p && !o.out);
 function log(t) { G.log.unshift(t); G.log = G.log.slice(0, 7); renderInfo(); }
-function save() { if (G && !G.over) lsSet('save', G); }
+function save() { if (G && !G.over && !ONLINE) lsSet('save', G); }
 
 /* ---------- 새 게임 ---------- */
 function newGame(mode, ids, rounds) {
@@ -87,6 +88,7 @@ function renderOwners() {
     $('.tl-own', el).innerHTML = o ? `<span style="background:${ownerColor(o.o)}">${o.o === 'rival' ? '🦊' : o.o === 'team' ? '🤝' : ownerName(o.o)[1] || ownerName(o.o)[0]}</span>` : '';
     $('.tl-bld', el).textContent = o && o.lv ? BUILD_ICONS[o.lv] : '';
   });
+  NET('g');
 }
 function tileCenter(i) {
   const [r, c] = tilePos(i);
@@ -113,6 +115,7 @@ function renderTokens(instant) {
     el.classList.toggle('me', G.players[G.turn] && G.players[G.turn].id === t.id);
     if (instant) { void el.offsetWidth; el.style.transition = ''; }
   });
+  NET('toks');
 }
 
 /* ---------- 가운데 + 오른쪽 패널 ---------- */
@@ -122,7 +125,7 @@ function renderCenter() {
       <button class="deck" id="c-deck"><img src="img/t_key.webp" class="k3"><img src="img/t_key.webp" class="k2"><img src="img/t_key.webp" class="k1"><span class="lbl">🔑 황금열쇠</span></button>
       <button class="piggy" id="c-pig"><img src="img/t_fund.webp"><span class="lbl" id="c-fund">🏦 기금</span></button>
     </div>
-    <div class="c-stage"><div class="c-title" id="c-title"></div><div class="c-score" id="c-score"></div><div class="figs" id="c-figs"></div></div>
+    <div class="c-stage"><div class="c-title" id="c-title"></div><div class="c-score" id="c-score"></div><div class="figs" id="c-figs"></div>${ONLINE ? `<div class="emo-bar" id="emo-bar">${['👍', '😂', '🎉', '😮', '😭', '❤️'].map(e => `<button data-e="${e}">${e}</button>`).join('')}</div>` : ''}</div>
     <div class="c-dice"><div class="tray">${Dice3D.html('d1')}${Dice3D.html('d2')}<div class="dsum" id="dsum"></div></div>
       <button class="btn big yellow" id="btn-roll" disabled>🎲 굴리기!</button></div>
     <div class="c-menu" id="c-menu"></div>`;
@@ -144,17 +147,18 @@ function renderInfo() {
   const sc = $('#c-score'); if (sc) sc.innerHTML = isCoop() ? `<span class="sc-t">🤝 우리 팀 💰 ${won(G.team.cash)}${G.team.debt ? ' · 빚' : ''}</span><span class="sc-r">🦊 ${won(G.rival.cash)}</span>` : '';
   const fg = $('#c-figs');
   if (fg) {
-    let h = G.players.map(m => `<button class="fig ${m === p ? 'now' : ''} ${m.out ? 'out' : ''}" data-p="${m.id}" style="--pc:${m.color}">${m.island ? '<i class="fb">🏝️</i>' : ''}${m.out ? '<i class="fb">🎤</i>' : ''}<img src="${m.img}"><span class="ped"></span><span class="tag"><b>${m.name}</b><span>${isCoop() ? '📮 ' + m.stamps.length : won(m.cash)}</span></span></button>`).join('');
+    let h = G.players.map(m => `<button class="fig ${m === p ? 'now' : ''} ${m.out ? 'out' : ''}" data-p="${m.id}" style="--pc:${m.color}">${ONLINE && Online.away(m) ? '<i class="fb">💤</i>' : ''}${m.island ? '<i class="fb">🏝️</i>' : ''}${m.out ? '<i class="fb">🎤</i>' : ''}<img src="${m.img}"><span class="ped"></span><span class="tag"><b>${m.name}</b><span>${isCoop() ? '📮 ' + m.stamps.length : won(m.cash)}</span></span></button>`).join('');
     if (isCoop() && !G.rival.out) h += `<button class="fig rival" data-p="rival" style="--pc:${RIVAL.color}"><span class="fox">🦊</span><span class="ped"></span><span class="tag"><b>여우</b><span>${won(G.rival.cash)}</span></span></button>`;
     fg.innerHTML = h; bindChips(fg);
   }
+  NET('g');
   const stg = $('#stage'), isTab = stg.classList.contains('L-tab'), isLand = stg.classList.contains('L-land'), isPort = stg.classList.contains('L-port');
   // 오른쪽
   const side = $('#side'); if (!side) return;
   const pc = (p) => {
     const k = keyOf(p), props = Object.keys(G.own).filter(i => G.own[i].o === k).length;
     return `<div class="pcard ${p === G.players[G.turn] ? 'now' : ''} ${p.out ? 'out' : ''}" style="--pc:${p.color}">
-      <img src="${p.img}" class="pc-av"><div class="pc-main"><div class="pc-name">${p.name} <span class="lv">${PEOPLE[p.pid].title}</span>${p.out ? ' <span class="host">🎤 사회자</span>' : ''}${p.island ? ' 🏝️' : ''}</div>
+      <img src="${p.img}" class="pc-av"><div class="pc-main"><div class="pc-name">${p.name} <span class="lv">${LVT[p.level]}</span>${p.out ? ' <span class="host">🎤 사회자</span>' : ''}${p.island ? ' 🏝️' : ''}</div>
       ${isCoop() ? `<div class="pc-sub">📮 도장 ${p.stamps.length} · 🎲 ${p.games.length}</div>` : `<div class="pc-cash">💰 ${won(p.cash)}${p.debt ? ` <span class="debt">빚 ${won(p.debt)}</span>` : ''}</div>
       <div class="pc-sub">🏙️ ${props}곳 · 📮 ${p.stamps.length} · 자산 ${won(assets(p.id))}${p.cards.free ? ' · 🛡️' : ''}${p.cards.half ? ' · 🎟️' : ''}</div>`}</div></div>`;
   };
@@ -173,6 +177,7 @@ function renderInfo() {
   $$('[data-m]').forEach(b => b.onclick = async () => {
     Sound.sfx('tap'); const m = b.dataset.m;
     if (m === 'book') openBook(); else if (m === 'coupon') openCoupons(); else if (m === 'set') openSettings();
+    else if (ONLINE) { if (await ask('<h2>방에서 나갈까요?</h2><p>나가면 내 차례는 컴퓨터가 대신 해요.<br>처음 화면의 \'온라인 이어하기\'로 다시 들어올 수 있어요.</p>', [{ t: '나가기', v: true, cls: 'yellow' }, { t: '계속하기', v: false, cls: 'gray' }])) location.reload(); }
     else if (await ask('<h2>잠깐 쉴까요?</h2><p>지금까지 한 게임은 저장돼요. 다음에 \'이어하기\'로 계속할 수 있어요.</p>', [{ t: '처음 화면으로', v: true, cls: 'yellow' }, { t: '계속하기', v: false, cls: 'gray' }])) location.reload();
   });
 }
@@ -201,7 +206,7 @@ function showPlayer(id) {
   else if (id === 'team') head = `<div class="pv-head"><span class="pv-emo" style="background:${TEAM_COLOR}">🤝</span><div><h2>우리 팀</h2><div class="pc-cash">💰 ${won(G.team.cash)}${G.team.debt ? ` <span class="debt">빚 ${won(G.team.debt)}</span>` : ''}</div><div class="muted">자산 ${won(assets('team'))}${G.team.loanUsed ? ' · 대출 사용함' : ''}</div></div></div>`;
   else {
     const p = G.players.find(x => x.id === id);
-    head = `<div class="pv-head"><img src="${p.img}"><div><h2 style="color:${p.color}">${p.name} <span class="lv">${PEOPLE[p.pid].title}</span>${p.out ? ' 🎤 사회자' : ''}</h2>
+    head = `<div class="pv-head"><img src="${p.img}"><div><h2 style="color:${p.color}">${p.name} <span class="lv">${LVT[p.level]}</span>${p.out ? ' 🎤 사회자' : ''}</h2>
       ${isCoop() ? '' : `<div class="pc-cash">💰 ${won(p.cash)}${p.debt ? ` <span class="debt">빚 ${won(p.debt)}</span>` : ''}</div><div class="muted">자산 ${won(assets(p.id))}${p.loanUsed ? ' · 대출 사용함' : ''}</div>`}
       <div class="muted">${p.cards.free ? '🛡️ 면제권 ' + p.cards.free + ' ' : ''}${p.cards.half ? '🎟️ 반값 ' + p.cards.half + ' ' : ''}${p.island ? '🏝️ 무인도 ' : ''}</div></div></div>`;
     body = `<div class="pv-sec"><b>📮 여권 도장 ${p.stamps.length}개</b><div>${p.stamps.length ? p.stamps.map(c => `<span class="stamp">${CITIES[c].flag}<small>${CITIES[c].name}</small></span>`).join('') : '<span class="muted">아직 없어요</span>'}</div></div>
@@ -348,6 +353,7 @@ async function bankrupt(p, to) {
 const today = () => { const d = new Date(); return `${d.getMonth() + 1}/${d.getDate()}`; };
 async function giveCoupon(pid, kind) {
   const kid = PEOPLE[pid].kid;
+  if (PEOPLE[pid].friend) { confetti(120); Sound.sfx('win'); await say(`<div class="coupon-big"><div class="cp-top">🏅 칭찬 메달</div><div class="cp-icon">🏅</div><div class="cp-name">정말 대단해요!</div><div class="muted">어려운 도전을 해냈어요 👏</div></div>`, '야호! 🎉'); return; }
   let icon, name, from;
   if (kid) ({ icon, name, from } = COUPONS[kind]); else { [icon, name] = pick(PARENT_COUPONS); from = '아이들'; }
   const list = lsGet('coupons', []);
@@ -383,14 +389,14 @@ async function landProp(p, i) {
   stamp(p, i);
   if (!o) {
     const can = w.cash >= d.price;
-    const act = await showCard(i, { top: `<div class="cd-top">${p.name}${josa(p.name, '이', '가')} 도착했어요!</div>`, note: can ? `퀴즈를 맞히면 <b>${won(d.price)}</b>에 살 수 있어요!` : `돈이 ${won(d.price - w.cash)} 부족해서 살 수 없어요.`,
+    const act = await showCard(i, { top: `<div class="cd-top">${josa(p.name, '이', '가')} 도착했어요!</div>`, note: can ? `퀴즈를 맞히면 <b>${won(d.price)}</b>에 살 수 있어요!` : `돈이 ${won(d.price - w.cash)} 부족해서 살 수 없어요.`,
       buttons: [{ t: `🧠 퀴즈 풀고 사기 (${won(d.price)})`, v: 'buy', cls: 'yellow', disabled: !can }, { t: '그냥 지나가기', v: 'skip', cls: 'gray' }] });
     if (act === 'buy') {
       const r = await Quiz.ask(p, { title: `${d.name} 땅 사기 퀴즈`, city: BOARD[i].t === 'city' ? d.id : null, helpers: helpersOf(p), host: hostOf() });
       if (r.ok) {
         w.cash -= d.price; G.own[i] = { o: k, lv: 0 }; Sound.sfx('buy');
         if (r.helper) gain(r.helper, 3, `${r.helper.name} 도와주기 보너스`);
-        renderOwners(); renderInfo(); toast(`🏙️ ${d.name}${josa(d.name, '을', '를')} 샀어요!`); log(`🏙️ ${p.name} ${d.name} 구입`);
+        renderOwners(); renderInfo(); toast(`🏙️ ${josa(d.name, '을', '를')} 샀어요!`); log(`🏙️ ${p.name} ${d.name} 구입`);
         await checkConquer(p, d.side);
       } else { log(`😢 ${p.name} ${d.name} 구입 실패`); }
     }
@@ -429,7 +435,7 @@ async function offerGame(p, gid, forced) {
     const go = await ask(`<h2>🎲 보드게임 퀘스트!</h2><p>${CITIES[g.city].name}에서 유명한 <b>${g.icon} ${g.name}</b>에 도전할까요?<br>이기면 <b>${won(ECON.gameWin)}</b> 상금!</p>`, [{ t: '도전!', v: true, cls: 'yellow' }, { t: '다음에', v: false, cls: 'gray' }]);
     if (!go) return;
   }
-  const others = isCoop() ? [] : G.players.filter(o => o !== p && !o.out);
+  const others = isCoop() ? [] : ONLINE ? (gid === 'snakes' ? [{ id: 'cpu', name: '컴퓨터', emoji: '🤖', color: '#2b3554', cpu: true }] : []) : G.players.filter(o => o !== p && !o.out);
   const r = await Mini.play(gid, { player: p, others, coop: isCoop(), rival: { ...G.rival } });
   if (!r) return;
   if (!p.games.includes(gid)) p.games.push(gid);
@@ -531,7 +537,7 @@ async function stepTo(p, n) {
 async function moveBy(p, n) { for (let s = 0; s < n; s++) { await stepTo(p, (p.pos + 1) % 40); await sleep(420); } hopEl(tokEl(p), 0, true); Sound.sfx('coin'); await sleep(450); }
 async function moveTo(p, target, salary) { let guard = 0; while (p.pos !== target && guard++ < 40) { const nx = (p.pos + 1) % 40; if (!salary && nx === 0) { p.pos = 0; renderTokens(); } else await stepTo(p, nx); await sleep(260); } hopEl(tokEl(p), 0, true); await sleep(400); }
 async function rollDice() {
-  const d1 = rnd(1, 6), d2 = rnd(1, 6); lastDice = [d1, d2];
+  const d1 = rnd(1, 6), d2 = rnd(1, 6); lastDice = [d1, d2]; NET('roll', [d1, d2]);
   Sound.sfx('dice'); $('#dsum').className = 'dsum';
   await Promise.all([Dice3D.roll($('#d1'), d1, 1250), sleep(90).then(() => Dice3D.roll($('#d2'), d2, 1250))]);
   const sm = $('#dsum'); sm.innerHTML = `${d1 + d2}${d1 === d2 ? '<small>더블!</small>' : ''}`; sm.className = 'dsum show';
@@ -582,7 +588,7 @@ async function rivalLand(r) {
   const i = r.pos, t = BOARD[i];
   if (isProp(i)) {
     const d = tileData(i), o = G.own[i];
-    if (!o) { if (r.cash >= d.price + 40 && Math.random() < 0.75) { r.cash -= d.price; G.own[i] = { o: 'rival', lv: 0 }; renderOwners(); toast(`🦊 여우 여행사가 ${d.name}${josa(d.name, '을', '를')} 샀어요!`); log(`🦊 ${d.name} 구입`); } }
+    if (!o) { if (r.cash >= d.price + 40 && Math.random() < 0.75) { r.cash -= d.price; G.own[i] = { o: 'rival', lv: 0 }; renderOwners(); toast(`🦊 여우 여행사가 ${josa(d.name, '을', '를')} 샀어요!`); log(`🦊 ${d.name} 구입`); } }
     else if (o.o === 'rival') { if (t.t === 'city' && d.type !== 'tour' && o.lv < 3) { const c = buildCost(i, o.lv + 1); if (r.cash >= c + 60 && Math.random() < 0.6) { r.cash -= c; o.lv++; renderOwners(); toast(`🦊 ${d.name}에 ${BUILD_NAMES[o.lv]} ${BUILD_ICONS[o.lv]}`); log(`🦊 ${d.name} ${BUILD_NAMES[o.lv]}`); } } }
     else { const fee = toll(i); toast(`🎉 여우 여행사가 우리 땅 ${d.name}에서 통행료 ${won(fee)}!`, 2000); log(`💰 🦊 → 우리 팀 ${won(fee)}`); await pay(r, fee, 'team'); }
   } else if (t.t === 'key') { const v = pick([15, 10, -8, -6, 20, -5]); if (v > 0) { r.cash += v; toast(`🦊 황금열쇠: +${won(v)}`); } else { toast(`🦊 황금열쇠: ${won(v)}`); await pay(r, -v, 'fund'); } }
@@ -624,8 +630,8 @@ async function loop() {
 
 /* ---------- 끝 ---------- */
 async function endGame(result) {
-  if (G.over) return; G.over = true;
-  lsSet('save', null);
+  if (G.over) return; G.over = true; G.result = result || null;
+  if (ONLINE) Online.finalState(); else lsSet('save', null);
   confetti(160); Sound.sfx('win');
   let html;
   if (isCoop()) {
@@ -643,6 +649,7 @@ async function endGame(result) {
   }
   const rec = lsGet('records', []); rec.unshift({ date: today(), mode: G.mode, result: isCoop() ? result : G.players.slice().sort((a, b) => (a.out - b.out) || assets(b.id) - assets(a.id))[0].name }); lsSet('records', rec.slice(0, 20));
   await say(html, '처음 화면으로', { box: 'wide' });
+  if (ONLINE) Online.forget();
   location.reload();
 }
 
@@ -650,6 +657,7 @@ async function endGame(result) {
 function startGameScreen() {
   $('#scr-title').classList.remove('on'); $('#scr-setup').classList.remove('on'); $('#scr-game').classList.add('on');
   renderBoard(); renderInfo(); save();
+  if (ONLINE) return Online.begin();
   loop();
 }
 function openBook() {
@@ -700,10 +708,12 @@ function howTo() {
 function titleScreen() {
   const s = lsGet('save');
   $('#title-btns').innerHTML = `<button class="btn big yellow" id="t-new">🌏 새 게임</button>${s && !s.over ? '<button class="btn big green" id="t-cont">▶ 이어하기</button>' : ''}
+<button class="btn big blue" id="t-online">👫 친구랑 온라인</button>
     <div class="row"><button class="btn white" id="t-book">📖 도시 도감</button><button class="btn white" id="t-cp">🎟️ 쿠폰함</button><button class="btn white" id="t-how">❓ 게임 방법</button><button class="btn white" id="t-set">⚙️</button></div>`;
   $('#t-new').onclick = () => { Sound.unlock(); Sound.sfx('tap'); setupScreen(); };
   if ($('#t-cont')) $('#t-cont').onclick = () => { Sound.unlock(); Sound.sfx('tap'); G = s; startGameScreen(); };
   $('#t-book').onclick = () => { Sound.unlock(); Sound.sfx('tap'); openBook(); };
+  $('#t-online').onclick = () => { Sound.unlock(); Sound.sfx('tap'); Online.lobby(); };
   $('#t-cp').onclick = () => { Sound.sfx('tap'); openCoupons(); };
   $('#t-how').onclick = () => { Sound.sfx('tap'); howTo(); };
   $('#t-set').onclick = () => { Sound.sfx('tap'); openSettings(); };

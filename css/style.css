@@ -799,3 +799,79 @@ h2 small, h1 small { font-size: 20px; color: #7a869a; margin-left: 8px; }
 .L-tab #title-btns .btn.big, .L-land #title-btns .btn.big { min-width: 0; width: 100%; font-size: 34px; padding: 16px 10px; }
 .L-tab #title-btns .row, .L-land #title-btns .row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; }
 .L-tab #title-btns .row .btn, .L-land #title-btns .row .btn { font-size: 21px; padding: 10px 6px; }
+
+/* ===== 친구랑 온라인 ===== */
+.on-setup, .on-room { gap: 12px; }
+.on-title { font-size: 46px; text-align: center; color: #fff; text-shadow: 0 4px 0 #1f6fd1, 0 8px 18px rgba(0,40,90,.4); line-height: 1.15; }
+.on-title small { display: block; font-size: 22px; text-shadow: 0 2px 6px rgba(0,40,90,.6); }
+.chars { display: grid; grid-template-columns: repeat(10, 1fr); gap: 10px; }
+.chb { font-family: inherit; border: none; border-radius: 22px; background: color-mix(in srgb, var(--pc) 10%, #fff); box-shadow: 0 5px 0 rgba(0,0,0,.12); padding: 6px 2px 4px; display: flex; flex-direction: column; align-items: center; cursor: pointer; position: relative; color: #253048; transition: transform .12s; }
+.chb img { height: 124px; filter: drop-shadow(0 4px 3px rgba(0,0,0,.18)); } .chb span { font-size: 20px; }
+.chb.on { background: color-mix(in srgb, var(--pc) 28%, #fff); box-shadow: 0 0 0 5px var(--pc), 0 8px 0 color-mix(in srgb, var(--pc) 60%, #000); transform: translateY(-3px); }
+.on-two { display: grid; grid-template-columns: 1fr 1.3fr; gap: 14px; }
+.on-input { font-family: inherit; font-size: 38px; width: 100%; border: 4px solid #cfdaf5; border-radius: 18px; padding: 6px 16px; text-align: center; color: #253048; outline: none; }
+.on-input:focus { border-color: #3d9bff; }
+.lvs { display: flex; gap: 10px; }
+.lvb { flex: 1; font-family: inherit; border: none; border-radius: 20px; background: #fff; box-shadow: 0 5px 0 rgba(0,0,0,.12); padding: 4px; display: flex; flex-direction: column; align-items: center; cursor: pointer; color: #253048; transition: transform .12s; }
+.lvb span { font-size: 26px; } .lvb b { font-size: 24px; } .lvb small { font-size: 15px; color: #6b7689; }
+.lvb.on { background: #3d9bff; color: #fff; box-shadow: 0 7px 0 #1f6fd1; transform: translateY(-3px); } .lvb.on small { color: #fff; }
+.on-acts { display: flex; gap: 16px; }
+.st-go .on-acts .btn.big { font-size: 34px; padding: 14px 30px; }
+.on-pin { width: 280px; font-size: 60px; letter-spacing: 14px; margin: 10px 0 6px; }
+.code-box { align-self: center; background: #fff; border-radius: 28px; padding: 8px 46px 12px; text-align: center; box-shadow: 0 8px 0 #e0a400, 0 14px 30px rgba(0,40,90,.25); border: 5px solid #ffd23f; }
+.code-box small { display: block; font-size: 22px; color: #7a869a; }
+.code-box b { display: block; font-size: 88px; letter-spacing: 18px; color: #ff7a1a; line-height: 1.05; margin-right: -18px; }
+.code-box span { font-size: 22px; }
+.slots { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+.slot { background: color-mix(in srgb, var(--pc) 15%, #fff); border-radius: 22px; padding: 8px; display: flex; flex-direction: column; align-items: center; box-shadow: 0 0 0 4px var(--pc); min-height: 214px; }
+.slot img { height: 136px; filter: drop-shadow(0 4px 3px rgba(0,0,0,.18)); }
+.slot b { font-size: 28px; } .slot b em { font-style: normal; font-size: 16px; background: var(--pc); color: #fff; border-radius: 10px; padding: 1px 8px; vertical-align: middle; }
+.slot small { font-size: 18px; color: #5b6576; }
+.slot.empty { background: rgba(255,255,255,.55); box-shadow: inset 0 0 0 4px #dbe4f0; justify-content: center; color: #9aa6b8; }
+.slot .q { font-size: 64px; line-height: 1.5; }
+.st-block.wait { font-size: 28px; text-align: center; padding: 18px; }
+.wait .dots { display: inline-block; animation: wob 1.2s infinite; }
+@keyframes wob { 50% { transform: translateY(-8px) rotate(10deg); } }
+.L-land .on-title { font-size: 30px; } .L-land .on-title small { font-size: 16px; display: inline; margin-left: 8px; }
+.L-land .chb img { height: 74px; } .L-land .chb span { font-size: 16px; }
+.L-land .on-input { font-size: 30px; padding: 2px 12px; }
+.L-land .lvb span { font-size: 20px; } .L-land .lvb b { font-size: 20px; } .L-land .lvb small { display: none; }
+.L-land .st-go .on-acts .btn.big { font-size: 28px; padding: 10px 26px; }
+.L-land .on-setup, .L-land .on-room { gap: 8px; }
+.L-land .code-box { padding: 2px 30px 6px; } .L-land .code-box b { font-size: 54px; } .L-land .code-box small, .L-land .code-box span { font-size: 16px; }
+.L-land .slot { min-height: 0; padding: 4px; flex-direction: row; gap: 8px; justify-content: center; }
+.L-land .slot img { height: 72px; } .L-land .slot b { font-size: 22px; } .L-land .slot small { display: none; } .L-land .slot .q { font-size: 40px; line-height: 1.2; }
+.L-port .chars { grid-template-columns: repeat(5, 1fr); gap: 8px; }
+.L-port .chb img { height: 96px; }
+.L-port .on-two { grid-template-columns: 1fr; gap: 10px; }
+.L-port .on-title { font-size: 38px; }
+.L-port .on-setup .st-go { flex-wrap: wrap; gap: 10px; }
+.L-port .on-acts { order: -1; width: 100%; } .L-port .on-acts .btn { flex: 1; }
+.L-port .st-go .on-acts .btn.big { font-size: 28px; padding: 14px 8px; }
+.L-port .slots { grid-template-columns: 1fr 1fr; }
+.L-port .slot { min-height: 190px; } .L-port .slot img { height: 116px; }
+.L-port .code-box b { font-size: 76px; }
+/* 친구 화면 엿보기 */
+.ov.peek { background: rgba(20,32,64,.22); z-index: 480; pointer-events: none; flex-direction: column; gap: 8px; }
+.ov.peek .modal { pointer-events: none; transform: scale(.8); box-shadow: 0 0 0 6px #ffd23f, 0 20px 60px rgba(0,0,0,.3); }
+.ov.peek.show .modal { transform: scale(.88); }
+.peek-tag { background: #253048; color: #fff; font-size: 22px; padding: 6px 18px; border-radius: 20px; box-shadow: 0 4px 0 rgba(0,0,0,.2); }
+/* 이모지 응원 */
+.emo-bar { display: flex; gap: 6px; background: rgba(255,255,255,.92); padding: 5px 8px; border-radius: 30px; box-shadow: 0 4px 0 rgba(0,0,0,.1); margin-top: 6px; position: relative; z-index: 3; }
+.emo-bar button { font-size: 26px; width: 46px; height: 46px; border: none; background: #f0f5ff; border-radius: 50%; cursor: pointer; padding: 0; transition: transform .1s; }
+.emo-bar button:active { transform: scale(1.3); }
+.L-land .emo-bar button { font-size: 22px; width: 38px; height: 38px; }
+.emo-pop { position: absolute; left: var(--x); bottom: 22%; z-index: 970; display: flex; align-items: center; gap: 6px; background: #fff; border-radius: 30px; padding: 4px 14px 4px 4px; box-shadow: 0 0 0 4px var(--pc), 0 8px 20px rgba(0,0,0,.25); animation: emoUp 2.6s ease-out forwards; pointer-events: none; }
+.emo-pop img { width: 46px; height: 46px; object-fit: cover; object-position: top; border-radius: 50%; background: color-mix(in srgb, var(--pc) 25%, #fff); }
+.emo-pop b { font-size: 20px; } .emo-pop span { font-size: 40px; }
+.tok-emo { position: absolute; left: 50%; top: -34px; font-size: 40px; animation: emoUp2 2.2s ease-out forwards; pointer-events: none; z-index: 5; }
+@keyframes emoUp { 0% { transform: translateY(40px) scale(.5); opacity: 0; } 12% { transform: translateY(0) scale(1.1); opacity: 1; } 80% { opacity: 1; } 100% { transform: translateY(-240px) scale(1); opacity: 0; } }
+@keyframes emoUp2 { 0% { transform: translate(-50%, 20px) scale(.4); opacity: 0; } 15% { transform: translate(-50%, 0) scale(1.2); opacity: 1; } 80% { opacity: 1; } 100% { transform: translate(-50%, -80px); opacity: 0; } }
+.L-land .setup.on-setup, .L-land .setup.on-room { display: flex; flex-direction: column; padding: 10px 30px 14px; }
+.L-land .on-setup .st-block, .L-land .on-room .st-block { grid-row: auto; grid-column: auto; }
+.L-land .on-setup .st-go, .L-land .on-room .st-go { flex-direction: row; justify-content: space-between; margin-top: auto; }
+.L-land .on-room .lens .len { padding: 6px; } .L-land .on-room .len .le { font-size: 22px; }
+.L-land .chb img { height: 118px; } .L-land .chb span { font-size: 18px; }
+.L-land .on-input { font-size: 34px; padding: 8px 12px; }
+.L-land .lvb { padding: 6px; } .L-land .lvb small { display: block; font-size: 14px; }
+.L-land .slot { flex-direction: column; gap: 0; padding: 6px; } .L-land .slot img { height: 104px; } .L-land .slot small { display: block; font-size: 15px; }
