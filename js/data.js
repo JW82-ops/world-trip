@@ -9,7 +9,7 @@ const PEOPLE = {
 };
 // 온라인 친구 캐릭터 (게임 속 이름은 각자 정한 별명)
 const FRIENDS = {
-  eunbyeol: { id: 'eunbyeol', name: '은별', color: '#9b7bff', img: 'img/f_eunbyeol.webp', friend: true },
+  eunbyeol: { id: 'eunbyeol', name: '은별', color: '#4aa8e0', img: 'img/f_eunbyeol.webp', friend: true },
   bunny: { id: 'bunny', name: '토끼', color: '#19b3a6', img: 'img/f_bunny.webp', friend: true },
   bear:  { id: 'bear',  name: '곰돌이', color: '#e5443a', img: 'img/f_bear.webp', friend: true },
   cat:   { id: 'cat',   name: '고양이', color: '#8b5cf6', img: 'img/f_cat.webp', friend: true },
