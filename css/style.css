@@ -875,3 +875,5 @@ h2 small, h1 small { font-size: 20px; color: #7a869a; margin-left: 8px; }
 .L-land .on-input { font-size: 34px; padding: 8px 12px; }
 .L-land .lvb { padding: 6px; } .L-land .lvb small { display: block; font-size: 14px; }
 .L-land .slot { flex-direction: column; gap: 0; padding: 6px; } .L-land .slot img { height: 104px; } .L-land .slot small { display: block; font-size: 15px; }
+.chars { grid-template-columns: repeat(11, 1fr); gap: 8px; }
+.L-port .chars { grid-template-columns: repeat(6, 1fr); gap: 6px; } .L-port .chb img { height: 84px; } .L-port .chb span { font-size: 16px; }

@@ -6,7 +6,7 @@
 var ONLINE = null;
 
 const Online = (() => {
-  const CHARS = ['jian', 'jia', 'mom', 'dad', 'bunny', 'bear', 'cat', 'panda', 'dino', 'shiba'];
+  const CHARS = ['jian', 'jia', 'mom', 'dad', 'eunbyeol', 'bunny', 'bear', 'cat', 'panda', 'dino', 'shiba'];
   const EMOS = ['👍', '😂', '🎉', '😮', '😭', '❤️'];
   let code = null, me = null, room = null, roomOff = null, offs = [];
   let running = false, runT = 0, curTurn = 0, hbTimer = null, gTimer = null, lastG = '', lastToks = '', mid = 0;
