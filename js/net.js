@@ -59,6 +59,8 @@ const Net = (() => {
       }
       for (const f of ['firebase-app-compat', 'firebase-auth-compat', 'firebase-database-compat']) await loadScript(`js/vendor/${f}.js`);
       if (!firebase.apps.length) firebase.initializeApp(FB_CFG);
+      // ?tab=1 : 탭마다 다른 사람으로 (한 기기에서 시험할 때)
+      if (/[?&]tab=1/.test(location.search)) await firebase.auth().setPersistence(firebase.auth.Auth.Persistence.SESSION);
       const cred = await firebase.auth().signInAnonymously();
       uid = cred.user.uid;
       db = firebase.database();
